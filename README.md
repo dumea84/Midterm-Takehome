@@ -8,6 +8,6 @@ Begin with comment lines that state the purpose of your code and also state the 
 Be sure to employ good software techniques to ensure "readability" of your code.
 Most importantly:  be sure that YOU nderstand every single line of the code that you submit.
 
-Before submitting your code, make sure it compiles properly on **Processing**.  
+Before submitting your code, make sure it compiles runs on **Processing**.  
     *(Code with syntax errors will not be graded!)*  
 
