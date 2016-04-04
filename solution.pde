@@ -1,7 +1,8 @@
-//// A possible solution for Midterm & Takehome.  CST 112.
+//// Midterm & Takehome.  CST 112.
 
 String title=  "Tail of the Sea";
 String subtitle=  "Catch fish by clicking on boat or crawler.\n  (Or use keys:  'b' for boat, 'c' for crawler, r to reset, q to quit.)";
+String news=". . .";
 String author=  "John Q. Student";
 
 int width=640, height=480;
@@ -57,6 +58,8 @@ void messages() {
   text( title, width/3, 20 );
   textSize(12);
   text( subtitle, width/5, 40 );
+  fill(255,0,255);
+  text( news, width/4, 80 );
   fill(255);
   text( author, 10, height-10 );
   // Scores.
@@ -82,12 +85,10 @@ void keyPressed() {
 void mousePressed() {
   // Click on boat to fish for charlie.
   if (lollipop.near( mouseX, mouseY )) {
-    background( 255, 0, 0 );
     lollipop.fish( nemo );
   }
   // Click on crawler to hunt for charlie.
   if (crabby.near( mouseX, mouseY )) {
-    background( 255, 255, 0 );
     crabby.hunt( nemo );
   }
 }
@@ -96,6 +97,7 @@ void mousePressed() {
 class Boat {
   float x,y, dx, dy=0;
   float w=100, h=40;
+  float flap=0;
   int caught=0;
   int counter=0;
   String name=  "???";
@@ -109,6 +111,7 @@ class Boat {
     y=surface;
     dx=  random( 1,7 );
     counter++;
+    news=  ". . .";
   }
   ////  METHODS  ////
   void move() {
@@ -123,6 +126,13 @@ class Boat {
     rect( x+w/3, y-w/3, w/3, -h*2/3 );
     if (dx>0)  triangle( x+w,y-h, x+w,y, x+w+w/3,y-h );
     else       triangle( x,y-h, x,y, x-w/3,y-h );
+    // Animation:  antenna flaps back and forth.
+    if (frameCount%10 ==0) flap=  random(-15, +15 );
+    strokeWeight(5);
+    stroke(200,150,100);
+    line( 20+x+w/3, y-h-20, 20+flap+x+w/3, y-h-60 );    
+    strokeWeight(1);
+    noStroke();
     // Display name & count
     fill(255);
     text( name+" "+counter, x+10, y-20 );
@@ -135,9 +145,11 @@ class Boat {
   }
   // If x coordinate is near, then capture this fish.
   void fish( Tuna t ) {
+    news +=   "\n" + lollipop.name + " is fishing!";
     if ( abs( t.x - this.x ) < 50) {
       caught++;
       t.restart();
+      news =  this.name + " caught fish " + caught;
     }
   }
 }
@@ -178,7 +190,7 @@ class Tuna {
       triangle( xTail, y, xTail-w/3, y-h/2, xTail-w/3, y+h/2   );    // Tail.
       stroke(255,0,0);
       strokeWeight(4);
-      line( x+w/2,y+5, x+w/4,y );      // mouth
+      line( x+w/2,y+7, x+w/4,y );      // mouth
       strokeWeight(1);
       noStroke();
       eye( x-10+w/2, y-10 );
@@ -187,20 +199,27 @@ class Tuna {
       triangle( xTail, y, xTail+w/3, y-h/2, xTail+w/3, y+h/2   );    // Tail.
       strokeWeight(4);
       stroke(255,0,0);
-      line( x-w/2,y, x-w/4,y+5 );      // mouth
+      line( x-w/2,y, x-w/4,y+7 );      // mouth
       strokeWeight(1);
       noStroke();
       eye( x+10-w/2, y-10 );
     }//if//
+    // Animation:  flap up & down
+    float flipper=20;
+    if (frameCount/60 % 3 == 0) flipper=  -20;
+    fill( 255,128,0 );
+    triangle( x-20,y+10, x+20,y+10, x+flipper,y+40 );
+    // Name
     fill(0);
-    text( name +"  "+ counter, x-20, y+10 );
+    text( name +"  "+ counter, x-20, y );
   }//show()//
   void eye( float xEye, float yEye ) {
       // Eye.
       fill(255,127,0);
-      ellipse( xEye, yEye, 10,10 );    //eye.
+      ellipse( xEye, yEye, 15,15 );    //eye.
       fill(0,0,255);
-      ellipse( xEye, yEye, 5,5 );
+      if (frameCount % 90 <30)  ellipse( xEye, yEye, 12,2 );
+      else ellipse( xEye, yEye, 8,8 );
   }  
 }
 
@@ -208,6 +227,7 @@ class Tuna {
 class Crawler {
   float x,y, dx, dy=0;
   float w=80, h=40;
+  float grab=20;
   int caught=0;
   int counter=0;
   String name="??";
@@ -232,26 +252,37 @@ class Crawler {
     fill( 0,255,255 );
     rect( x-w/2,y, -20,5 );
     rect( x+w/2,y, 20,5 );
+    // Claws
     fill( 255, 0, 255 );
-    rect( x-w/2,y-h/2, 10,10 );
+    stroke( 255, 0, 255 );
+    claw( x-w/3, y-h/3, -grab, -grab );
+    claw( x+w/3, y-h/3, +grab, -grab );
+    // Bottom claws
     rect( x-w/2,y+h/2, 10,-10 );
-    rect( x+w/2,y-h/2, -10,10 );
     rect( x+w/2,y+h/2, -10,-10 );
     // Name & #
     fill(0);
     text( name+" "+counter, x-20, y-5 );
     text( caught, x-10, y+20 );
   }
+  void claw( float x, float y, float gx, float gy ) {
+    rect( x+gx,y+gy, 15,15 );
+    line( x+gx,y+gy, x,y );
+  }
+
   // Return true if (x,y) is near (<20)
   boolean near( float xx, float yy ) {
     return ( dist(x,y, xx,yy) < 20 );
   }
   // If x coordinate is near, then capture this fish.
   void hunt( Tuna t ) {
+    news +=  "\n" + this.name + " is hunting . . . ";
+    grab=  random( 10, +50 );
     if (abs( t.x -this.x )<50) {
       caught++;
       t.restart();
       this.restart();
+      news=  this.name + " grabbed fish " + caught;
     }
   }
 }
