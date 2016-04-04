@@ -146,6 +146,14 @@ class Boat {
     text( name+" "+counter, x+10, y-20 );
     fill(0);
     text( caught, x-10+w/2, y-h );                    // Display catch in cabin.
+    // Stripes
+    stroke(0,0,255);
+    float yy=  y-h/2+2;
+    for (int j=0; j<counter; j++) {  
+      line( x+5, yy, x+w-5, yy );
+      yy += 2;
+    }
+    noStroke();
   }
   // Return true if (x,y) is near (<20)
   boolean near( float xx, float yy ) {
