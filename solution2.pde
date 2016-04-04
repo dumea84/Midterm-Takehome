@@ -1,4 +1,5 @@
 //// Midterm & Takehome.  CST 112.
+//  Animation, waves, antenna flap, fish eye, etc.
 
 String title=  "Tail of the Sea";
 String subtitle=  "Catch fish by clicking on boat or crawler.\n  (Or use keys:  'b' for boat, 'c' for crawler, r to reset, q to quit.)";
@@ -128,7 +129,7 @@ class Boat {
     y += dy;
   }
   void show() {
-    y=  surface + 20 +random( -2, +2 );
+    y=  surface + xNext/2 +random( -2, +2 );
     fill( 255, 0, 0 );
     rect( x, y-h, w, h );
     rect( x+w/3, y-w/3, w/3, -h*2/3 );
